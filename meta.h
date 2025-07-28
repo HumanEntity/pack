@@ -93,8 +93,8 @@ META_EXTERN bool meta_set_nth ( meta_value *value, int idx, meta_value *new_valu
 META_EXTERN int meta_array_len ( const meta_value *value );
 
 /* Some constructors */
-#define meta_new_obj() ( { (meta_value) { .type = META_VALUETYPE_OBJ, .data = { 0 } } } )
-#define meta_new_array() ( { (meta_value) { .type = META_VALUETYPE_ARRAY, .data = { 0 } } } )
+#define meta_new_obj() ( { ( meta_value ){ .type = META_VALUETYPE_OBJ, .data = { 0 } }; } )
+#define meta_new_array() ( { ( meta_value ){ .type = META_VALUETYPE_ARRAY, .data = { 0 } }; } )
 
 #define meta_new_integer( int_data )                                                              \
         ( {                                                                                       \
@@ -465,8 +465,25 @@ META_EXTERN void meta_free ( const meta_value *value ) {
         }
 }
 
+META_STATIC bool _meta_is_field_sanitized ( const char *field_name ) {
+        META_ASSERT( field_name != NULL, "Null string is not sanitized" );
+
+        if ( !_meta_is_alphabetic( *field_name ) ) {
+                return false;
+        }
+
+        while ( *field_name != 0 ) {
+                if ( !_meta_is_alphanumeric( *field_name++ ) ) {
+                        return false;
+                }
+        }
+
+        return true;
+}
+
 META_EXTERN bool meta_get_field ( const meta_value *value, const char *field_name, meta_value *field_value ) {
         META_ASSERT( value->type == META_VALUETYPE_OBJ, "Only objects support field access\n" );
+        META_ASSERT( _meta_is_field_sanitized( field_name ), "Field name not sanitized \"%s\"\n", field_name );
 
         int i;
         for ( i = 0; i < value->data.obj.present; ++i ) {
@@ -481,6 +498,7 @@ META_EXTERN bool meta_get_field ( const meta_value *value, const char *field_nam
 
 META_EXTERN bool meta_set_field ( meta_value *value, const char *field_name, const meta_value *new_value ) {
         META_ASSERT( value->type == META_VALUETYPE_OBJ, "Only objects support field access\n" );
+        META_ASSERT( _meta_is_field_sanitized( field_name ), "Field name not sanitized \"%s\"\n", field_name );
 
         int i;
         for ( i = 0; i < value->data.obj.present; ++i ) {
