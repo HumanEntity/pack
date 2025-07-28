@@ -349,8 +349,7 @@ int main ( int argc, char **argv ) {
 
         const int base_len = 1024 * 4;
 
-        meta_value image_data =
-            (meta_value) { .type = META_VALUETYPE_OBJ, .data = { .obj = { .present = 0 } } };
+        meta_value image_data = meta_new_array();
 
         for ( int i = 0; i < image_count; ++i ) {
                 float uv_left = (float) image_locations[i].x / (float) width;
@@ -378,7 +377,10 @@ int main ( int argc, char **argv ) {
                                 &(meta_value) { .type = META_VALUETYPE_INT,
                                                 .data = { .integer = images[i].size.height } } );
 
-                meta_set_field( &image_data, images[i].name, &image_desc );
+                meta_value str = meta_new_string( images[i].name );
+                meta_set_field( &image_desc, "name", &str );
+
+                meta_set_nth( &image_data, meta_array_len( &image_data ), &image_desc );
 
                 // snprintf( file_metadata, 512,
                 // "[%s]\ntop=%d\nleft=%d\nwidth=%d\nheight=%d\nuv_top=\"%f\"\nuv_left=\"%f\"\nuv_bottom=\"%f\"\nuv_right=\"%f\"\n\n",
@@ -389,6 +391,11 @@ int main ( int argc, char **argv ) {
                 // strlcat( metadata, file_metadata, base_len );
         }
 
+        meta_value atlas_desc = meta_new_obj();
+        meta_value atlas_texture = meta_new_string( image_output );
+        meta_set_field( &atlas_desc, "atlas_texture", &atlas_texture );
+        meta_set_field( &atlas_desc, "subtextures", &image_data );
+
         // Allocate some space for metadata
         char *metadata = malloc( sizeof( char ) * base_len );
         for ( int i = 0; i < base_len; ++i ) {
@@ -396,7 +403,7 @@ int main ( int argc, char **argv ) {
         }
 
         printf( "Compose\n" );
-        meta_compose( &image_data, metadata, sizeof( char ) * base_len );
+        meta_compose( &atlas_desc, metadata, sizeof( char ) * base_len );
         printf( "Compose2\n" );
 
         // strlcat( metadata, "# Computer generated do not edit\n\n", base_len );
