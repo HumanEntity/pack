@@ -1,0 +1,48 @@
+---
+IndentWidth: 8
+# ContinuationIndentWidth: 8
+
+SpaceBeforeParens: Custom
+SpaceBeforeParensOptions:
+  AfterControlStatements: true
+  AfterFunctionDefinitionName: true
+  AfterFunctionDeclarationName: true
+
+SpacesInParens: Custom
+SpacesInParensOptions:
+  ExceptDoubleParentheses: true
+  InConditionalStatements: true
+  # InEmptyParentheses: true
+  Other: true
+
+MaxEmptyLinesToKeep: 2
+SeparateDefinitionBlocks: Always
+SortIncludes: Never
+SpaceAfterCStyleCast: true
+AlignTrailingComments: Always
+PointerAlignment: Right
+InsertBraces: false
+BreakBeforeBraces: Custom
+BraceWrapping:
+  AfterCaseLabel: false
+  AfterClass: false # true
+  AfterControlStatement: Never
+  AfterEnum: false # true
+  AfterFunction: false # true
+  AfterStruct: false # true
+  AfterUnion: false # true
+  BeforeCatch: false
+  BeforeElse: false
+  BeforeWhile: false
+  IndentBraces: false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
+
+NamespaceIndentation: All
+AccessModifierOffset: -8
+
+
+ColumnLimit: 0
+
+---
